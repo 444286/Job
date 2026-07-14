@@ -1,0 +1,365 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Hirely — Find Your Next Role</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --navy-950:#0A1628;
+    --navy-800:#132445;
+    --navy-700:#1B2F57;
+    --indigo:#4F46E5;
+    --indigo-light:#EEF0FF;
+    --amber:#F5A623;
+    --amber-dark:#DD8F14;
+    --ivory:#FAF9F5;
+    --ink:#111827;
+    --slate:#64748B;
+    --line:#E8E5DC;
+    --green:#16A34A;
+    --card-shadow:0 1px 2px rgba(10,22,40,0.04), 0 8px 24px rgba(10,22,40,0.06);
+  }
+  *{margin:0;padding:0;box-sizing:border-box;}
+  body{
+    background:var(--ivory);
+    color:var(--ink);
+    font-family:'Inter',Arial,sans-serif;
+    -webkit-font-smoothing:antialiased;
+  }
+  h1,h2,h3,.display{ font-family:'Space Grotesk',sans-serif; letter-spacing:-0.02em; }
+
+  /* ---------------- HERO ---------------- */
+  .hero{
+    position:relative;
+    background:
+      radial-gradient(circle at 85% 0%, rgba(79,70,229,0.55) 0%, rgba(79,70,229,0) 45%),
+      radial-gradient(circle at 5% 100%, rgba(245,166,35,0.18) 0%, rgba(245,166,35,0) 40%),
+      linear-gradient(180deg, var(--navy-950) 0%, var(--navy-800) 100%);
+    color:#fff;
+    padding:52px 20px 90px;
+    overflow:hidden;
+  }
+  .hero-inner{ max-width:760px; margin:0 auto; text-align:center; position:relative; z-index:2; }
+  .eyebrow{
+    display:inline-flex; align-items:center; gap:8px;
+    font-size:12px; font-weight:600; letter-spacing:0.14em; text-transform:uppercase;
+    color:#C7D0FF; margin-bottom:18px;
+  }
+  .live-dot{
+    width:7px; height:7px; border-radius:50%; background:var(--green);
+    box-shadow:0 0 0 0 rgba(22,163,74,0.6);
+    animation:pulse 2s infinite;
+  }
+  @keyframes pulse{
+    0%{ box-shadow:0 0 0 0 rgba(22,163,74,0.55); }
+    70%{ box-shadow:0 0 0 8px rgba(22,163,74,0); }
+    100%{ box-shadow:0 0 0 0 rgba(22,163,74,0); }
+  }
+  .hero h1{
+    font-size:clamp(2.1rem, 5vw, 3.25rem);
+    font-weight:700;
+    line-height:1.08;
+    margin-bottom:16px;
+  }
+  .hero p.sub{
+    font-size:16px;
+    color:#B9C2DE;
+    max-width:520px;
+    margin:0 auto;
+    line-height:1.6;
+  }
+
+  /* search pill overlapping hero bottom edge */
+  .search-wrap{
+    max-width:640px;
+    margin:34px auto -46px;
+    position:relative;
+    z-index:3;
+  }
+  .search-pill{
+    background:#fff;
+    border-radius:16px;
+    box-shadow:0 20px 40px rgba(10,22,40,0.25);
+    display:flex;
+    align-items:center;
+    gap:10px;
+    padding:6px 6px 6px 18px;
+  }
+  .search-pill svg{ flex-shrink:0; color:var(--slate); }
+  .search-pill input{
+    flex:1;
+    border:none;
+    outline:none;
+    font-size:15px;
+    font-family:inherit;
+    padding:12px 4px;
+    color:var(--ink);
+    background:transparent;
+  }
+  .search-pill input::placeholder{ color:#9CA3AF; }
+
+  /* ---------------- MAIN ---------------- */
+  main{ max-width:760px; margin:0 auto; padding:70px 20px 40px; }
+
+  .chip-row{
+    display:flex; flex-wrap:wrap; gap:8px;
+    margin-bottom:26px;
+  }
+  .chip{
+    border:1px solid var(--line);
+    background:#fff;
+    color:var(--slate);
+    font-size:13px;
+    font-weight:600;
+    padding:7px 14px;
+    border-radius:100px;
+    cursor:pointer;
+    transition:all .15s ease;
+  }
+  .chip:hover{ border-color:var(--indigo); color:var(--indigo); }
+  .chip.active{ background:var(--navy-950); border-color:var(--navy-950); color:#fff; }
+
+  .results-label{
+    font-size:13px; font-weight:600; color:var(--slate);
+    text-transform:uppercase; letter-spacing:0.06em;
+    margin-bottom:14px;
+  }
+
+  .job-grid{ display:flex; flex-direction:column; gap:14px; }
+
+  .job-card{
+    background:#fff;
+    border:1px solid var(--line);
+    border-left:5px solid var(--tag-color, var(--indigo));
+    border-radius:14px;
+    padding:20px 22px;
+    box-shadow:var(--card-shadow);
+    opacity:0;
+    animation:cardIn .45s ease forwards;
+    transition:transform .18s ease, box-shadow .18s ease;
+  }
+  .job-card:hover{ transform:translateY(-3px); box-shadow:0 4px 8px rgba(10,22,40,0.06), 0 16px 32px rgba(10,22,40,0.10); }
+  @keyframes cardIn{ from{ opacity:0; transform:translateY(8px); } to{ opacity:1; transform:translateY(0); } }
+
+  .job-top{ display:flex; justify-content:space-between; align-items:flex-start; gap:12px; margin-bottom:10px; }
+  .job-title{ font-size:17px; font-weight:700; color:var(--ink); line-height:1.3; }
+  .job-tag{
+    flex-shrink:0;
+    font-size:11px; font-weight:700; text-transform:uppercase; letter-spacing:0.05em;
+    color:var(--tag-color, var(--indigo));
+    background:color-mix(in srgb, var(--tag-color, var(--indigo)) 12%, white);
+    padding:4px 10px; border-radius:6px;
+  }
+
+  .job-meta{
+    display:flex; flex-wrap:wrap; gap:14px;
+    font-size:13px; color:var(--slate); margin-bottom:12px;
+  }
+  .job-meta span{ display:inline-flex; align-items:center; gap:5px; }
+  .job-meta svg{ flex-shrink:0; }
+
+  .job-desc{
+    font-size:14.5px; color:#3A4454; line-height:1.6;
+    margin-bottom:16px; white-space:pre-line;
+  }
+
+  .apply-btn{
+    display:inline-flex; align-items:center; gap:8px;
+    background:var(--amber); color:#1a1200;
+    text-decoration:none; font-weight:700; font-size:14px;
+    padding:11px 20px; border-radius:9px;
+    transition:background .15s ease, transform .15s ease;
+  }
+  .apply-btn:hover{ background:var(--amber-dark); transform:translateX(2px); }
+  .apply-btn svg{ transition:transform .15s ease; }
+  .apply-btn:hover svg{ transform:translateX(3px); }
+
+  .empty-state, .loading{
+    text-align:center; color:var(--slate); padding:70px 20px; font-size:15px;
+  }
+  .empty-state .big{ font-size:34px; margin-bottom:10px; }
+
+  footer{
+    text-align:center; color:var(--slate); font-size:12.5px;
+    padding:30px 20px 40px; border-top:1px solid var(--line); margin-top:20px;
+  }
+
+  @media (prefers-reduced-motion: reduce){
+    .job-card{ animation:none; opacity:1; }
+    .live-dot{ animation:none; }
+  }
+</style>
+</head>
+<body>
+
+<section class="hero">
+  <div class="hero-inner">
+    <div class="eyebrow"><span class="live-dot"></span><span id="liveCount">Loading roles…</span></div>
+    <h1>Find work that actually fits.</h1>
+    <p class="sub">Vetted roles, updated in real time. No noise, no dead links — just apply.</p>
+  </div>
+  <div class="search-wrap">
+    <div class="search-pill">
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="11" cy="11" r="7"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+      <input type="text" id="searchInput" placeholder="Search by title or location…">
+    </div>
+  </div>
+</section>
+
+<main>
+  <div class="chip-row" id="chipRow"></div>
+  <div class="results-label" id="resultsLabel">All roles</div>
+  <div class="job-grid" id="jobsContainer">
+    <div class="loading">Loading jobs…</div>
+  </div>
+</main>
+
+<footer>© <span id="year"></span> Hirely. Listings managed by our team.</footer>
+
+<!-- Firebase SDK -->
+<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-database-compat.js"></script>
+
+<script>
+document.getElementById('year').textContent = new Date().getFullYear();
+
+// ================== FIREBASE CONFIG ==================
+// Paste your Firebase project config here
+const firebaseConfig = {
+  apiKey: "YOUR_API_KEY",
+  authDomain: "YOUR_PROJECT.firebaseapp.com",
+  databaseURL: "https://YOUR_PROJECT-default-rtdb.firebaseio.com",
+  projectId: "YOUR_PROJECT",
+  storageBucket: "YOUR_PROJECT.appspot.com",
+  messagingSenderId: "YOUR_SENDER_ID",
+  appId: "YOUR_APP_ID"
+};
+firebase.initializeApp(firebaseConfig);
+const db = firebase.database();
+// =======================================================
+
+// Tag -> accent color map (keep in sync with admin.html)
+const TAG_COLORS = {
+  'urgent':'#F5A623', 'remote':'#4F46E5', 'full-time':'#16A34A',
+  'part-time':'#8B5CF6', 'contract':'#0D9488', 'internship':'#E11D48'
+};
+const FALLBACK_COLORS = ['#4F46E5','#0D9488','#8B5CF6','#F5A623','#16A34A','#E11D48'];
+function colorForTag(tag){
+  if(!tag) return '#4F46E5';
+  const key = tag.trim().toLowerCase();
+  if (TAG_COLORS[key]) return TAG_COLORS[key];
+  let hash = 0;
+  for (let i=0;i<key.length;i++){ hash = key.charCodeAt(i) + ((hash<<5)-hash); }
+  return FALLBACK_COLORS[Math.abs(hash) % FALLBACK_COLORS.length];
+}
+
+function timeAgo(ts){
+  if(!ts) return '';
+  const diff = Math.max(0, Date.now() - ts);
+  const mins = Math.floor(diff/60000);
+  if (mins < 60) return mins <= 1 ? 'Just posted' : `${mins}m ago`;
+  const hrs = Math.floor(mins/60);
+  if (hrs < 24) return `${hrs}h ago`;
+  const days = Math.floor(hrs/24);
+  if (days < 30) return `${days}d ago`;
+  return `${Math.floor(days/30)}mo ago`;
+}
+
+let allJobs = [];
+let activeChip = null;
+
+const jobsContainer = document.getElementById('jobsContainer');
+const searchInput = document.getElementById('searchInput');
+const chipRow = document.getElementById('chipRow');
+const resultsLabel = document.getElementById('resultsLabel');
+const liveCount = document.getElementById('liveCount');
+
+function escapeHtml(str){
+  if (!str) return '';
+  return str.replace(/[&<>"']/g, m => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m]));
+}
+
+const pinIcon = '<svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>';
+const clockIcon = '<svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>';
+const arrowIcon = '<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>';
+
+function renderChips(jobs){
+  const tags = [...new Set(jobs.map(j => (j.tag||'').trim()).filter(Boolean))];
+  if (!tags.length){ chipRow.innerHTML=''; return; }
+  chipRow.innerHTML = tags.map(t => `
+    <button class="chip ${activeChip===t?'active':''}" data-tag="${escapeHtml(t)}">${escapeHtml(t)}</button>
+  `).join('');
+  chipRow.querySelectorAll('.chip').forEach(btn=>{
+    btn.addEventListener('click', ()=>{
+      activeChip = activeChip === btn.dataset.tag ? null : btn.dataset.tag;
+      renderAll();
+    });
+  });
+}
+
+function renderJobs(jobs){
+  if (!jobs.length){
+    jobsContainer.innerHTML = `<div class="empty-state"><div class="big">🗂️</div>No roles match your search — try different keywords.</div>`;
+    return;
+  }
+  jobsContainer.innerHTML = jobs.map((job,i) => `
+    <div class="job-card" style="--tag-color:${colorForTag(job.tag)}; animation-delay:${Math.min(i,6)*0.05}s">
+      <div class="job-top">
+        <div class="job-title">${escapeHtml(job.title)}</div>
+        ${job.tag ? `<span class="job-tag">${escapeHtml(job.tag)}</span>` : ''}
+      </div>
+      <div class="job-meta">
+        <span>${pinIcon} ${escapeHtml(job.location || 'Location not specified')}</span>
+        ${job.createdAt ? `<span>${clockIcon} ${timeAgo(job.createdAt)}</span>` : ''}
+      </div>
+      <div class="job-desc">${escapeHtml(job.description)}</div>
+      <a class="apply-btn" href="${escapeHtml(job.applyLink || '#')}" target="_blank" rel="noopener">Apply Now ${arrowIcon}</a>
+    </div>
+  `).join('');
+}
+
+function filterJobs(){
+  const query = searchInput.value.trim().toLowerCase();
+  return allJobs.filter(job=>{
+    const matchesQuery = !query || (job.title||'').toLowerCase().includes(query) || (job.location||'').toLowerCase().includes(query);
+    const matchesChip = !activeChip || (job.tag||'').trim() === activeChip;
+    return matchesQuery && matchesChip;
+  });
+}
+
+function renderAll(){
+  const filtered = filterJobs();
+  renderChips(allJobs);
+  renderJobs(filtered);
+  resultsLabel.textContent = activeChip ? `${activeChip} roles` : (searchInput.value.trim() ? 'Search results' : 'All roles');
+}
+
+db.ref('jobs').on('value', (snapshot) => {
+  const data = snapshot.val();
+  if (!data){
+    allJobs = [];
+    liveCount.textContent = 'No open roles right now';
+    renderAll();
+    return;
+  }
+  allJobs = Object.keys(data)
+    .map(key => ({ id:key, ...data[key] }))
+    .filter(job => job.active !== false)
+    .sort((a,b) => (b.createdAt||0) - (a.createdAt||0));
+
+  liveCount.textContent = `${allJobs.length} open role${allJobs.length===1?'':'s'} right now`;
+  renderAll();
+}, (error) => {
+  jobsContainer.innerHTML = '<div class="empty-state">⚠️ Failed to load jobs</div>';
+  console.error(error);
+});
+
+searchInput.addEventListener('input', renderAll);
+</script>
+
+</body>
+      </html>
