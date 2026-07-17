@@ -1,4 +1,4 @@
 User-agent: *
 Allow: /
 
-Sitemap: https://www.applyjob.pages.dev/sitemap.xml
+Sitemap: https://applyjob.pages.dev/sitemap.xml
