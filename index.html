@@ -3,11 +3,39 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Job World— Recent Job with High Salary</title>
+
+<!-- ===================== SEO META TAGS ===================== -->
+<title>USA Jobs 2026 – High Salary Job Openings Today | JobWorld</title>
+<meta name="description" content="Find the latest high-paying job openings in the USA. New roles added daily across top companies. Apply now on JobWorld — the fastest way to find your next career opportunity.">
+<meta name="keywords" content="USA jobs, high salary jobs, latest job openings, apply for jobs USA, job vacancies today, remote jobs USA, job board 2026">
+<meta name="robots" content="index, follow">
+<meta name="author" content="JobWorld">
+<link rel="canonical" href="https://www.yourdomain.com/">
+
+<!-- Open Graph / Facebook -->
+<meta property="og:type" content="website">
+<meta property="og:title" content="USA Jobs 2026 – High Salary Job Openings Today | JobWorld">
+<meta property="og:description" content="Find the latest high-paying job openings in the USA. New roles added daily. Apply now on JobWorld.">
+<meta property="og:image" content="https://www.yourdomain.com/og-image.jpg">
+<meta property="og:url" content="https://www.yourdomain.com/">
+<meta property="og:site_name" content="JobWorld">
+
+<!-- Twitter Card -->
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="USA Jobs 2026 – High Salary Job Openings Today | JobWorld">
+<meta name="twitter:description" content="Find the latest high-paying job openings in the USA. New roles added daily. Apply now on JobWorld.">
+<meta name="twitter:image" content="https://www.yourdomain.com/og-image.jpg">
+<!-- =========================================================== -->
+
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
-<script src="https://oatstuckalfred.com/fe/bb/bf/febbbfd6c4e0693e517ee167e6a31eb9.js"></script>
+
+<!-- Site-wide JobPosting list schema (updated dynamically once jobs load) -->
+<script type="application/ld+json" id="jobSchema">
+{}
+</script>
+
 <style>
   :root{
     --blue:#2158E4;
@@ -135,6 +163,12 @@
     grid-column:1/-1;
   }
 
+  /* Extra SEO content block (crawlable static text, hidden visually only if you choose) */
+  .seo-intro{
+    max-width:900px; margin:18px auto 0; padding:0 18px;
+    color:var(--slate); font-size:13px; line-height:1.6; text-align:center;
+  }
+
   footer{
     text-align:center; color:var(--slate); font-size:12.5px;
     padding:20px 20px 40px;
@@ -146,7 +180,7 @@
 </style>
 </head>
 <body>
-<script src="https://oatstuckalfred.com/1a/5e/58/1a5e5819e16aa575569ae8863f7bd1d1.js"></script>
+
 <div class="topbar">
   <div class="topbar-inner">
     <div class="logo"><span class="mark">J</span>Job<span class="accent">World</span></div>
@@ -158,9 +192,10 @@
 </div>
 
 <div class="section-title">
-  <h2>🔥 Hot Jobs</h2>
+  <h1 style="font-size:19px;color:var(--blue);font-weight:800;">🔥 Hot Jobs in the USA — High Salary Openings</h1>
 </div>
 <div class="live-note" id="liveCount">Loading roles…</div>
+<p class="seo-intro">Browse the latest high-salary job openings in the USA. New job vacancies are added every day across top companies. Find and apply to jobs quickly — updated in real time.</p>
 
 <div class="grid-wrap">
   <div class="job-grid" id="jobsContainer">
@@ -168,7 +203,7 @@
   </div>
 </div>
 
-<footer>© <span id="year"></span> JobBoard. Listings managed by our team.</footer>
+<footer>© <span id="year"></span> JobWorld. Listings managed by our team.</footer>
 
 <!-- Firebase SDK -->
 <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
@@ -183,7 +218,6 @@ function toggleSearch(){
 }
 
 // ================== FIREBASE CONFIG ==================
-// Paste your Firebase project config here
 const firebaseConfig = {
   apiKey: "AIzaSyA2ywhu40GO2cZrE-amDOMOb2MfypDTc7Q",
   authDomain: "jobs-82d0f.firebaseapp.com",
@@ -229,7 +263,7 @@ function renderJobs(jobs){
     return `
     <div class="job-cell" style="animation-delay:${Math.min(i,7)*0.05}s">
       <div class="company-logo" style="background:${job.logoUrl ? '#F1F3F6' : avatarColor};">
-        ${job.logoUrl ? `<img src="${escapeHtml(job.logoUrl)}" alt="${escapeHtml(job.companyName)}">` : initial}
+        ${job.logoUrl ? `<img src="${escapeHtml(job.logoUrl)}" alt="${escapeHtml(job.companyName)} logo">` : initial}
       </div>
       <div class="company-name">${escapeHtml(job.companyName || 'Company')}</div>
       <div class="titles-list">
@@ -240,6 +274,52 @@ function renderJobs(jobs){
   `;
   }).join('');
 }
+
+// ---------- Build JobPosting structured data so Google can index each job ----------
+function updateJobSchema(jobs){
+  const schemaEl = document.getElementById('jobSchema');
+  if (!jobs.length){ schemaEl.textContent = '{}'; return; }
+
+  const postings = jobs.slice(0, 20).map(job => {
+    const titles = (job.jobTitles || '').split('\n').map(t=>t.trim()).filter(Boolean);
+    const title = titles[0] || 'Open Position';
+    const datePosted = job.createdAt ? new Date(job.createdAt).toISOString() : new Date().toISOString();
+    return {
+      "@context": "https://schema.org/",
+      "@type": "JobPosting",
+      "title": title,
+      "description": titles.join(', ') || title,
+      "identifier": {
+        "@type": "PropertyValue",
+        "name": job.companyName || "Company",
+        "value": job.id || ""
+      },
+      "datePosted": datePosted,
+      "employmentType": "FULL_TIME",
+      "hiringOrganization": {
+        "@type": "Organization",
+        "name": job.companyName || "Company",
+        "sameAs": job.applyLink || undefined,
+        "logo": job.logoUrl || undefined
+      },
+      "jobLocation": {
+        "@type": "Place",
+        "address": {
+          "@type": "PostalAddress",
+          "addressCountry": "US"
+        }
+      },
+      "directApply": true
+    };
+  });
+
+  // Google reads a single JobPosting per script tag best; embed as @graph array
+  schemaEl.textContent = JSON.stringify({
+    "@context": "https://schema.org",
+    "@graph": postings
+  }, null, 2);
+}
+// -----------------------------------------------------------------------------------
 
 function filterJobs(){
   const query = searchInput.value.trim().toLowerCase();
@@ -256,6 +336,7 @@ db.ref('jobs').on('value', (snapshot) => {
     allJobs = [];
     liveCount.textContent = 'No open roles right now';
     renderJobs([]);
+    updateJobSchema([]);
     return;
   }
   allJobs = Object.keys(data)
@@ -265,6 +346,7 @@ db.ref('jobs').on('value', (snapshot) => {
 
   liveCount.textContent = `${allJobs.length} open role${allJobs.length===1?'':'s'} right now`;
   renderJobs(filterJobs());
+  updateJobSchema(allJobs);
 }, (error) => {
   jobsContainer.innerHTML = '<div class="empty-state">⚠️ Failed to load jobs</div>';
   console.error(error);
